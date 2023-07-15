@@ -1,0 +1,24 @@
+version: '3.5'
+
+volumes:
+  ignus_db_data:
+
+networks:
+    db-bridge:
+
+services:
+  postgres_db:
+    image: postgres
+    command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
+    restart: always
+    container_name: ignus-db
+    volumes:
+      - ignus_db_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: ${POSTGRESQL_NAME_DB}
+      POSTGRES_USER: ${POSTGRESQL_USER_DB}
+      POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD_DB}
+    networks:
+        - db-bridge
