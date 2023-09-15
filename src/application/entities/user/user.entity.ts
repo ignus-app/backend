@@ -8,6 +8,7 @@ interface UserProps {
   passwordEnabled: boolean
   avatarUrl?: string | null
   accountType?: string | null
+  accessLevel: number
   createdAt: Date
 }
 
@@ -15,10 +16,13 @@ export class User {
   private _id: string
   private props: UserProps
 
-  constructor(props: Replace<UserProps, { createdAt?: Date }>) {
+  constructor(
+    props: Replace<UserProps, { accessLevel?: number; createdAt?: Date }>,
+  ) {
     this._id = randomUUID()
     this.props = {
       ...props,
+      accessLevel: props.accessLevel ?? 0,
       createdAt: props.createdAt ?? new Date(),
     }
   }
@@ -65,6 +69,14 @@ export class User {
 
   public set accountType(accountType: string) {
     this.props.accountType = accountType
+  }
+
+  public get accessLevel(): number {
+    return this.props.accessLevel
+  }
+
+  public set accessLevel(accessLevel: number) {
+    this.props.accessLevel = accessLevel
   }
 
   public get createdAt(): Date {

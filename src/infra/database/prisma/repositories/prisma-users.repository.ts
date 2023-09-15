@@ -96,7 +96,7 @@ export class PrismaUsersRepository implements UsersRepository {
     }
   }
 
-  async auth(request: FastifyRequest): Promise<void> {
+  async auth(request: FastifyRequest): Promise<any> {
     const [type, token] = request.headers.authorization?.split(' ') ?? []
     const { userId, sessionClaims } = getAuth(request)
 
@@ -107,6 +107,10 @@ export class PrismaUsersRepository implements UsersRepository {
         id: userClerk.id,
       },
     })
+
+    if (!user) {
+      throw new Error('User not found.')
+    }
 
     if (userClerk.id !== user?.id) {
       user = await this.postgresql.user.create({
@@ -145,6 +149,9 @@ export class PrismaUsersRepository implements UsersRepository {
                   : userClerk.emailAddresses[0].verification?.strategy ===
                     'from_oauth_google'
                   ? 'oauth_google'
+                  : userClerk.emailAddresses[0].verification?.strategy ===
+                    'from_oauth_facebook'
+                  ? 'oauth_facebook'
                   : ''
                 : '',
             provider_account_id:
